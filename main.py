@@ -1,8 +1,11 @@
 import urllib.request
 import http.client
 from bs4 import BeautifulSoup
-import csv
+import pandas as pd
 import json
+
+# pip install pandas
+# pip install beautifulsoup4
 
 # Config #
 
@@ -20,20 +23,20 @@ def get_csv_row(row):
         
     if row[0] in data_arr:
         if (row[0] == row[2]):
-            data_arr[row[0]]["counters"].append(row[1])
+            data_arr[row[0]]["good_matchup"].append(row[1])
         else:
-            data_arr[row[0]]["loses"].append(row[1])
+            data_arr[row[0]]["bad_matchup"].append(row[1])
     if row[1] in data_arr:
         if (row[1] == row[2]):
-            data_arr[row[1]]["counters"].append(row[0])
+            data_arr[row[1]]["bad_matchup"].append(row[0])
         else:
-            data_arr[row[1]]["loses"].append(row[0])
+            data_arr[row[1]]["bad_matchup"].append(row[0])
 
 
 def get_csv_data():
-    with open(config_combat_csv, 'r') as csv_data:
-        for row in csv.reader(csv_data):
-            get_csv_row(row)
+    data_frame = pd.read_csv(config_combat_csv, header=None)
+    for row in data_frame.itertuples(index=False, name=None):
+        get_csv_row(row)
 
 # Scrapping
 
@@ -68,10 +71,14 @@ def get_stats_data():
             "loses": [],
         }
 
-print()
+
 get_stats_data()
 get_csv_data()
-print(json.dumps(data_arr, indent=4))
+
+""" print(json.dumps(data_arr, indent=4)) """
+
+with open('result.json', 'w') as file:
+    json.dump(data_arr, file)
 
 # python -m venv env
 # env\Scripts\activate
