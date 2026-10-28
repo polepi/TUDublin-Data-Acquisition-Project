@@ -67,13 +67,20 @@ def get_stats_data():
             "stats_sp_attack": td_items[7].get_text(),
             "stats_sp_defence": td_items[8].get_text(),
             "stats_speed": td_items[9].get_text(),
-            "counters": [],
-            "loses": [],
+            "good_matchup": [],
+            "bad_matchup": [],
         }
+
+
+def cleanup_data():
+    for key, value in list(data_arr.items()):
+        if not value["good_matchup"] and not value["bad_matchup"]:
+            data_arr.pop(key)
 
 
 get_stats_data()
 get_csv_data()
+cleanup_data()
 
 """ print(json.dumps(data_arr, indent=4)) """
 
